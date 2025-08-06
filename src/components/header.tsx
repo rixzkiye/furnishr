@@ -1,3 +1,5 @@
+"use client";
+
 import Link from 'next/link';
 import { Menu, Sofa } from 'lucide-react';
 import {
@@ -8,8 +10,15 @@ import {
     SheetTrigger,
   } from "@/components/ui/sheet"
 import { Button } from './ui/button';
+import { useState } from 'react';
 
 const Header = () => {
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const handleLinkClick = () => {
+    setMobileMenuOpen(false);
+  };
+
   return (
     <header className="bg-background/80 backdrop-blur-sm sticky top-0 z-40 border-b">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -31,7 +40,7 @@ const Header = () => {
             </Link>
         </nav>
         <div className="md:hidden">
-            <Sheet>
+            <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                 <SheetTrigger asChild>
                     <Button variant="outline" size="icon">
                         <Menu className="h-6 w-6" />
@@ -43,13 +52,13 @@ const Header = () => {
                         <SheetTitle className="sr-only">Menu Navigasi</SheetTitle>
                     </SheetHeader>
                     <div className="grid gap-4 py-6">
-                        <Link href="/" className="text-lg font-medium text-foreground transition-colors hover:text-primary">
+                        <Link href="/" onClick={handleLinkClick} className="text-lg font-medium text-foreground transition-colors hover:text-primary">
                             Beranda
                         </Link>
-                        <Link href="/products" className="text-lg font-medium text-foreground transition-colors hover:text-primary">
+                        <Link href="/products" onClick={handleLinkClick} className="text-lg font-medium text-foreground transition-colors hover:text-primary">
                             Produk
                         </Link>
-                        <Link href="/about" className="text-lg font-medium text-foreground transition-colors hover:text-primary">
+                        <Link href="/about" onClick={handleLinkClick} className="text-lg font-medium text-foreground transition-colors hover:text-primary">
                             Tentang Kami
                         </Link>
                     </div>
