@@ -27,10 +27,21 @@ const ProductFilters = ({
   setSearchTerm,
   searchPreviewResults,
 }: ProductFiltersProps) => {
+  const [inputValue, setInputValue] = useState(searchTerm);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
   const showPreview = searchTerm.length > 0 && isPopoverOpen;
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchTerm(inputValue);
+    }, 500); // 500ms delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [inputValue, setSearchTerm]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -45,6 +56,13 @@ const ProductFilters = ({
     };
   }, []);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    if (!isPopoverOpen) {
+        setIsPopoverOpen(true);
+    }
+  };
+
   return (
     <div className="bg-card p-4 rounded-lg border shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
         <div className="w-full md:flex-1" ref={searchContainerRef}>
@@ -56,8 +74,8 @@ const ProductFilters = ({
                       id="search-input"
                       type="text"
                       placeholder="Search products..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      value={inputValue}
+                      onChange={handleInputChange}
                       onFocus={() => setIsPopoverOpen(true)}
                       className="w-full"
                       autoComplete="off"
@@ -68,7 +86,7 @@ const ProductFilters = ({
                 <div className="flex flex-col gap-1">
                   {searchPreviewResults.length > 0 ? (
                     searchPreviewResults.map(product => (
-                      <Link key={product.id} href={`/products/${product.slug}`} className="hover:bg-accent">
+                      <Link key={product.id} href={`/products/${product.slug}`} className="hover:bg-accent" onClick={() => setIsPopoverOpen(false)}>
                         <div className="flex items-center gap-4 p-2">
                           <Image 
                             src={product.images[0].url} 
