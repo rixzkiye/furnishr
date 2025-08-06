@@ -3,6 +3,8 @@ import { Menu, Sofa } from 'lucide-react';
 import {
     Sheet,
     SheetContent,
+    SheetHeader,
+    SheetTitle,
     SheetTrigger,
   } from "@/components/ui/sheet"
 import { Button } from './ui/button';
@@ -37,6 +39,9 @@ const Header = () => {
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="right">
+                    <SheetHeader>
+                        <SheetTitle className="sr-only">Menu Navigasi</SheetTitle>
+                    </SheetHeader>
                     <div className="grid gap-4 py-6">
                         <Link href="/" className="text-lg font-medium text-foreground transition-colors hover:text-primary">
                             Beranda
