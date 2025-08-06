@@ -12,7 +12,7 @@ export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative bg-background text-center py-20 md:py-32">
+      <section className="relative bg-background text-center flex items-center justify-center min-h-[calc(100vh-4rem)] py-12">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-10"
           style={{
