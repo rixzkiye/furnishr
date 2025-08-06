@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger, PopoverAnchor } from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverAnchor } from '@/components/ui/popover';
 import { Product } from '@/lib/products';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -28,30 +28,26 @@ const ProductFilters = ({
   searchPreviewResults,
 }: ProductFiltersProps) => {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
+
   const showPreview = searchTerm.length > 0 && isPopoverOpen;
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value;
-    setSearchTerm(term);
-    setIsPopoverOpen(term.length > 0);
-  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+        setIsPopoverOpen(false);
+      }
+    };
 
-  const handleFocus = () => {
-    if (searchTerm.length > 0) {
-      setIsPopoverOpen(true);
-    }
-  };
-
-  const handleBlur = () => {
-    // We delay the popover closing to allow for clicks inside it
-    setTimeout(() => {
-      setIsPopoverOpen(false);
-    }, 150);
-  };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="bg-card p-4 rounded-lg border shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
-        <div className="w-full md:flex-1">
+        <div className="w-full md:flex-1" ref={searchContainerRef}>
             <Popover open={showPreview} onOpenChange={setIsPopoverOpen}>
               <PopoverAnchor asChild>
                 <div>
@@ -61,9 +57,8 @@ const ProductFilters = ({
                       type="text"
                       placeholder="Search products..."
                       value={searchTerm}
-                      onChange={handleSearchChange}
-                      onFocus={handleFocus}
-                      onBlur={handleBlur}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onFocus={() => setIsPopoverOpen(true)}
                       className="w-full"
                       autoComplete="off"
                   />
