@@ -159,6 +159,24 @@ const products: Product[] = [
       'Color': 'Matte Black',
     },
   },
+  {
+    id: '9',
+    slug: 'industrial-pendant-light',
+    name: 'Industrial Pendant Light',
+    category: 'Lighting',
+    price: 95.00,
+    description: 'This industrial-style pendant light is perfect for kitchens and dining areas. The metal shade directs light downwards, creating focused illumination. Its simple, functional design adds a modern, urban edge to any room.',
+    images: [
+      { url: 'https://placehold.co/600x600', hint: 'pendant light industrial' },
+      { url: 'https://placehold.co/600x600', hint: 'pendant light hanging' },
+    ],
+    specifications: {
+      'Material': 'Spun Steel',
+      'Dimensions': '10" H x 12" Diameter Shade',
+      'Weight': '8 lbs',
+      'Color': 'Matte Black',
+    },
+  },
 ];
 
 
