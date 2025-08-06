@@ -31,12 +31,9 @@ const ProductFilters = ({
   const showPreview = searchTerm.length > 0 && isPopoverOpen;
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    if (e.target.value.length > 0) {
-      setIsPopoverOpen(true);
-    } else {
-      setIsPopoverOpen(false);
-    }
+    const term = e.target.value;
+    setSearchTerm(term);
+    setIsPopoverOpen(term.length > 0);
   };
 
   const handleFocus = () => {
