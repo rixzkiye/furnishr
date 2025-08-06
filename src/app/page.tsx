@@ -4,14 +4,24 @@ import { useState, useMemo } from 'react';
 import { getProducts, Product } from '@/lib/products';
 import ProductCard from '@/components/product-card';
 import ProductFilters from '@/components/product-filters';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Button } from '@/components/ui/button';
 
 const products = getProducts();
 const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
+const ITEMS_PER_PAGE = 8;
 
 export default function Home() {
   const [sortOption, setSortOption] = useState('name-asc');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = [...products];
@@ -37,6 +47,28 @@ export default function Home() {
         return filtered.sort((a, b) => a.name.localeCompare(b.name));
     }
   }, [selectedCategory, sortOption, searchTerm]);
+  
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / ITEMS_PER_PAGE);
+
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredAndSortedProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [currentPage, filteredAndSortedProducts]);
+
+  // Reset to page 1 whenever filters change
+  useMemo(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, sortOption, searchTerm]);
+
+
+  const handlePreviousPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
+
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -58,8 +90,8 @@ export default function Home() {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-8">
-        {filteredAndSortedProducts.length > 0 ? (
-          filteredAndSortedProducts.map((product) => (
+        {paginatedProducts.length > 0 ? (
+          paginatedProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))
         ) : (
@@ -69,6 +101,30 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <div className="mt-12 flex justify-center">
+            <Pagination>
+                <PaginationContent>
+                    <PaginationItem>
+                        <Button variant="outline" onClick={handlePreviousPage} disabled={currentPage === 1}>
+                            <PaginationPrevious href="#" onClick={(e) => e.preventDefault()} />
+                            <span className="hidden sm:inline ml-1">Previous</span>
+                        </Button>
+                    </PaginationItem>
+                    <PaginationItem className="font-medium text-muted-foreground mx-4">
+                        Page {currentPage} of {totalPages}
+                    </PaginationItem>
+                    <PaginationItem>
+                         <Button variant="outline" onClick={handleNextPage} disabled={currentPage === totalPages}>
+                            <span className="hidden sm:inline mr-1">Next</span>
+                            <PaginationNext href="#" onClick={(e) => e.preventDefault()} />
+                        </Button>
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
+        </div>
+      )}
     </div>
   );
 }
