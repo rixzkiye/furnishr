@@ -31,12 +31,12 @@ const ProductFilters = ({
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
-  const showPreview = searchTerm.length > 0 && isPopoverOpen;
+  const showPreview = inputValue.length > 0 && isPopoverOpen;
 
   useEffect(() => {
     const handler = setTimeout(() => {
       setSearchTerm(inputValue);
-    }, 500); // 500ms delay
+    }, 300); // 300ms delay
 
     return () => {
       clearTimeout(handler);

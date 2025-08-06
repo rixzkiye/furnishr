@@ -56,8 +56,8 @@ export default function Home() {
     return filteredAndSortedProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [currentPage, filteredAndSortedProducts]);
 
-  // Reset to page 1 whenever filters change
-  useMemo(() => {
+  // Reset to page 1 whenever filters change, except for pagination itself
+  useEffect(() => {
     setCurrentPage(1);
   }, [selectedCategory, sortOption, searchTerm]);
 
@@ -71,19 +71,18 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Only scroll if it's not the initial render on page 1
-    if (currentPage > 0 && topOfProductsRef.current) {
+    if (topOfProductsRef.current) {
         topOfProductsRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [currentPage]);
   
   const searchPreviewResults = useMemo(() => {
     if (!searchTerm) return [];
-    // Return all products for preview, not just the filtered ones by category
+    // The filtering logic for the preview remains the same
     return products.filter(p => 
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.description.toLowerCase().includes(searchTerm.toLowerCase())
-    ).slice(0, 5); // Limit to 5 results for preview
+    ).slice(0, 5);
   }, [searchTerm]);
 
   return (
