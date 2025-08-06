@@ -12,9 +12,10 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Button } from '@/components/ui/button';
+import ProductCardSkeleton from '@/components/product-card-skeleton';
 
-const products = getProducts();
-const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
+const allProducts = getProducts();
+const categories = ['All', ...Array.from(new Set(allProducts.map(p => p.category)))];
 const ITEMS_PER_PAGE = 8;
 
 export default function ProductsPage() {
@@ -22,10 +23,20 @@ export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const topOfProductsRef = useRef<HTMLDivElement>(null);
 
+  // Simulate loading on initial mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500); // Simulate a 1.5-second loading time
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = [...products];
+    let filtered = [...allProducts];
 
     if (searchTerm) {
       filtered = filtered.filter(p => 
@@ -71,15 +82,16 @@ export default function ProductsPage() {
   };
 
   useEffect(() => {
-    if (topOfProductsRef.current) {
+    // Only scroll if not in the initial loading state
+    if (!loading && topOfProductsRef.current) {
         topOfProductsRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [currentPage]);
+  }, [currentPage, loading]);
   
   const searchPreviewResults = useMemo(() => {
     if (!searchTerm) return [];
     // The filtering logic for the preview remains the same
-    return products.filter(p => 
+    return allProducts.filter(p => 
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.description.toLowerCase().includes(searchTerm.toLowerCase())
     ).slice(0, 5);
@@ -109,7 +121,11 @@ export default function ProductsPage() {
 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-8">
-        {paginatedProducts.length > 0 ? (
+        {loading ? (
+          Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+            <ProductCardSkeleton key={index} />
+          ))
+        ) : paginatedProducts.length > 0 ? (
           paginatedProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))
@@ -121,7 +137,7 @@ export default function ProductsPage() {
         )}
       </div>
 
-      {totalPages > 1 && (
+      {!loading && totalPages > 1 && (
         <div className="mt-12 flex justify-center">
             <Pagination>
                 <PaginationContent>
