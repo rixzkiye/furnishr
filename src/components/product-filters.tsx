@@ -1,4 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 
 interface ProductFiltersProps {
   categories: string[];
@@ -6,6 +7,8 @@ interface ProductFiltersProps {
   setSelectedCategory: (category: string) => void;
   sortOption: string;
   setSortOption: (option: string) => void;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
 }
 
 const ProductFilters = ({
@@ -14,12 +17,25 @@ const ProductFilters = ({
   setSelectedCategory,
   sortOption,
   setSortOption,
+  searchTerm,
+  setSearchTerm,
 }: ProductFiltersProps) => {
   return (
-    <div className="bg-card p-4 rounded-lg border shadow-sm flex flex-col sm:flex-row gap-4 justify-between items-center">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full sm:w-auto">
-            <div>
-                <label htmlFor="category-select" className="block text-sm font-medium text-muted-foreground mb-1">Category</label>
+    <div className="bg-card p-4 rounded-lg border shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+        <div className="w-full md:flex-1">
+             <label htmlFor="search-input" className="sr-only">Search</label>
+            <Input
+                id="search-input"
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+            />
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <div className="w-full">
+                <label htmlFor="category-select" className="sr-only">Category</label>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                     <SelectTrigger id="category-select" className="w-full sm:w-[200px]">
                         <SelectValue placeholder="Select a category" />
@@ -33,8 +49,8 @@ const ProductFilters = ({
                     </SelectContent>
                 </Select>
             </div>
-            <div>
-                <label htmlFor="sort-select" className="block text-sm font-medium text-muted-foreground mb-1">Sort by</label>
+            <div className="w-full">
+                <label htmlFor="sort-select" className="sr-only">Sort by</label>
                 <Select value={sortOption} onValueChange={setSortOption}>
                     <SelectTrigger id="sort-select" className="w-full sm:w-[200px]">
                         <SelectValue placeholder="Sort products" />
