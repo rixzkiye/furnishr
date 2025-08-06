@@ -33,9 +33,9 @@ export default function ProductPage({ params }: ProductPageProps) {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
       <div className="mb-8">
-        <Link href="/" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+        <Link href="/products" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
             <ChevronLeft className="w-4 h-4 mr-1" />
-            Back to Collection
+            Kembali ke Koleksi
         </Link>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16">
@@ -48,7 +48,7 @@ export default function ProductPage({ params }: ProductPageProps) {
           <Separator className="my-6" />
           <p className="text-base text-muted-foreground leading-relaxed">{product.description}</p>
           <div className="mt-8">
-            <h2 className="text-xl font-semibold font-headline text-foreground">Specifications</h2>
+            <h2 className="text-xl font-semibold font-headline text-foreground">Spesifikasi</h2>
             <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
               {Object.entries(product.specifications).map(([key, value]) => (
                 <li key={key} className="flex">
@@ -62,7 +62,7 @@ export default function ProductPage({ params }: ProductPageProps) {
             <Button asChild size="lg" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground">
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <WhatsappIcon className="w-5 h-5 mr-2" />
-                Contact on WhatsApp
+                Hubungi di WhatsApp
               </a>
             </Button>
           </div>

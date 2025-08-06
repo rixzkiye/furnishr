@@ -11,8 +11,16 @@ const Header = () => {
             Furnishr Static
           </span>
         </Link>
-        <nav>
-          {/* Future navigation links can go here */}
+        <nav className="hidden md:flex gap-6">
+            <Link href="/" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              Beranda
+            </Link>
+            <Link href="/products" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              Produk
+            </Link>
+            <Link href="/about" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              Tentang Kami
+            </Link>
         </nav>
       </div>
     </header>

@@ -1,149 +1,83 @@
-"use client";
-
-import { useState, useMemo, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import { getProducts, Product } from '@/lib/products';
 import ProductCard from '@/components/product-card';
-import ProductFilters from '@/components/product-filters';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 const products = getProducts();
-const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
-const ITEMS_PER_PAGE = 8;
 
-export default function Home() {
-  const [sortOption, setSortOption] = useState('name-asc');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const topOfProductsRef = useRef<HTMLDivElement>(null);
-
-  const filteredAndSortedProducts = useMemo(() => {
-    let filtered = [...products];
-
-    if (searchTerm) {
-      filtered = filtered.filter(p => 
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (selectedCategory && selectedCategory !== 'All') {
-      filtered = filtered.filter(p => p.category === selectedCategory);
-    }
-
-    switch (sortOption) {
-      case 'price-asc':
-        return filtered.sort((a, b) => a.price - b.price);
-      case 'price-desc':
-        return filtered.sort((a, b) => b.price - a.price);
-      case 'name-asc':
-      default:
-        return filtered.sort((a, b) => a.name.localeCompare(b.name));
-    }
-  }, [selectedCategory, sortOption, searchTerm]);
-  
-  const totalPages = Math.ceil(filteredAndSortedProducts.length / ITEMS_PER_PAGE);
-
-  const paginatedProducts = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    return filteredAndSortedProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [currentPage, filteredAndSortedProducts]);
-
-  // Reset to page 1 whenever filters change, except for pagination itself
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedCategory, sortOption, searchTerm]);
-
-
-  const handlePreviousPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
-
-  const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  };
-
-  useEffect(() => {
-    if (topOfProductsRef.current) {
-        topOfProductsRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [currentPage]);
-  
-  const searchPreviewResults = useMemo(() => {
-    if (!searchTerm) return [];
-    // The filtering logic for the preview remains the same
-    return products.filter(p => 
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchTerm.toLowerCase())
-    ).slice(0, 5);
-  }, [searchTerm]);
+export default function HomePage() {
+  const featuredProducts = products.slice(0, 4);
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold font-headline tracking-tight text-foreground">Our Collection</h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Discover handcrafted furniture designed for comfort, style, and longevity.
-        </p>
-      </div>
-
-      <div ref={topOfProductsRef} className="scroll-mt-20">
-        <ProductFilters
-          categories={categories}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          sortOption={sortOption}
-          setSortOption={setSortOption}
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          searchPreviewResults={searchPreviewResults}
-        />
-      </div>
-
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mt-8">
-        {paginatedProducts.length > 0 ? (
-          paginatedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))
-        ) : (
-          <div className="col-span-full text-center py-16">
-            <h2 className="text-2xl font-semibold text-foreground">No Products Found</h2>
-            <p className="text-muted-foreground mt-2">Try adjusting your search or filter criteria.</p>
-          </div>
-        )}
-      </div>
-
-      {totalPages > 1 && (
-        <div className="mt-12 flex justify-center">
-            <Pagination>
-                <PaginationContent>
-                    <PaginationItem>
-                        <Button variant="outline" onClick={handlePreviousPage} disabled={currentPage === 1}>
-                            <PaginationPrevious href="#" onClick={(e) => e.preventDefault()} />
-                            <span className="hidden sm:inline ml-1">Previous</span>
-                        </Button>
-                    </PaginationItem>
-                    <PaginationItem className="font-medium text-muted-foreground mx-4">
-                        Page {currentPage} of {totalPages}
-                    </PaginationItem>
-                    <PaginationItem>
-                         <Button variant="outline" onClick={handleNextPage} disabled={currentPage === totalPages}>
-                            <span className="hidden sm:inline mr-1">Next</span>
-                            <PaginationNext href="#" onClick={(e) => e.preventDefault()} />
-                        </Button>
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
+    <div>
+      {/* Hero Section */}
+      <section className="relative bg-background text-center py-20 md:py-32">
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{
+            backgroundImage: "url('https://images.pexels.com/photos/1080696/pexels-photo-1080696.jpeg')",
+          }}
+        ></div>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <h1 className="text-4xl md:text-6xl font-bold font-headline tracking-tight text-foreground">
+            Desain Abadi untuk Rumah Anda
+          </h1>
+          <p className="mt-6 max-w-3xl mx-auto text-lg md:text-xl text-muted-foreground">
+            Temukan furnitur buatan tangan yang memadukan keindahan, kenyamanan, dan daya tahan.
+          </p>
+          <Button asChild size="lg" className="mt-8">
+            <Link href="/products">Jelajahi Koleksi Kami</Link>
+          </Button>
         </div>
-      )}
+      </section>
+      
+      {/* About Section */}
+      <section className="py-16 md:py-24">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1">
+                  <h2 className="text-3xl md:text-4xl font-bold font-headline text-foreground">Tentang Furnishr Static</h2>
+                  <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
+                  Di Furnishr Static, kami percaya bahwa furnitur harus lebih dari sekadar fungsional. Itu harus menjadi cerminan gaya Anda, sumber kenyamanan, dan bagian dari cerita rumah Anda. Kami berdedikasi untuk membuat karya abadi yang akan Anda hargai selama bertahun-tahun yang akan datang.
+                  </p>
+                  <p className="mt-4 text-muted-foreground leading-relaxed">
+                  Tim pengrajin ahli kami menggunakan bahan-bahan terbaik dan teknik yang telah teruji waktu untuk membuat setiap perabot. Dari keanggunan kayu solid hingga kemewahan kain kami, setiap detail dipertimbangkan dengan cermat untuk memastikan kualitas dan keindahan.
+                  </p>
+                  <Button asChild variant="outline" className="mt-6">
+                      <Link href="/about">Pelajari Lebih Lanjut</Link>
+                  </Button>
+              </div>
+              <div className="order-1 md:order-2">
+                  <Image
+                  src="https://images.pexels.com/photos/1129413/pexels-photo-1129413.jpeg"
+                  alt="Interior ruang tamu yang ditata dengan baik"
+                  width={600}
+                  height={450}
+                  className="rounded-lg shadow-xl w-full h-auto object-cover"
+                  data-ai-hint="ruang tamu interior"
+                  />
+              </div>
+            </div>
+          </div>
+      </section>
+
+      {/* Featured Products Section */}
+      <section className="bg-muted py-16 md:py-24">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold font-headline text-foreground">Produk Unggulan</h2>
+            <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+              Lihat beberapa barang favorit pilihan kami dari koleksi kami.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
