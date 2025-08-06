@@ -76,6 +76,15 @@ export default function Home() {
         topOfProductsRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [currentPage]);
+  
+  const searchPreviewResults = useMemo(() => {
+    if (!searchTerm) return [];
+    // Return all products for preview, not just the filtered ones by category
+    return products.filter(p => 
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchTerm.toLowerCase())
+    ).slice(0, 5); // Limit to 5 results for preview
+  }, [searchTerm]);
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -95,6 +104,7 @@ export default function Home() {
           setSortOption={setSortOption}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
+          searchPreviewResults={searchPreviewResults}
         />
       </div>
 

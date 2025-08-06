@@ -1,5 +1,10 @@
+import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger, PopoverAnchor } from '@/components/ui/popover';
+import { Product } from '@/lib/products';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface ProductFiltersProps {
   categories: string[];
@@ -9,6 +14,7 @@ interface ProductFiltersProps {
   setSortOption: (option: string) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  searchPreviewResults: Product[];
 }
 
 const ProductFilters = ({
@@ -19,19 +25,58 @@ const ProductFilters = ({
   setSortOption,
   searchTerm,
   setSearchTerm,
+  searchPreviewResults,
 }: ProductFiltersProps) => {
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const showPreview = isSearchFocused && searchTerm.length > 0;
+
   return (
     <div className="bg-card p-4 rounded-lg border shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
         <div className="w-full md:flex-1">
-             <label htmlFor="search-input" className="sr-only">Search</label>
-            <Input
-                id="search-input"
-                type="text"
-                placeholder="Search products..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-            />
+            <Popover open={showPreview} onOpenChange={(open) => !open && setIsSearchFocused(false)}>
+              <PopoverAnchor asChild>
+                <div>
+                  <label htmlFor="search-input" className="sr-only">Search</label>
+                  <Input
+                      id="search-input"
+                      type="text"
+                      placeholder="Search products..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onFocus={() => setIsSearchFocused(true)}
+                      onBlur={() => setTimeout(() => setIsSearchFocused(false), 150)} // Delay to allow click on popover
+                      className="w-full"
+                      autoComplete="off"
+                  />
+                </div>
+              </PopoverAnchor>
+              <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                <div className="flex flex-col gap-1">
+                  {searchPreviewResults.length > 0 ? (
+                    searchPreviewResults.map(product => (
+                      <Link key={product.id} href={`/products/${product.slug}`} className="hover:bg-accent">
+                        <div className="flex items-center gap-4 p-2">
+                          <Image 
+                            src={product.images[0].url} 
+                            alt={product.name} 
+                            width={40} 
+                            height={40} 
+                            className="rounded-md object-cover"
+                            data-ai-hint={product.images[0].hint}
+                          />
+                          <div>
+                            <p className="font-medium text-sm">{product.name}</p>
+                            <p className="text-xs text-muted-foreground">{product.category}</p>
+                          </div>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="p-4 text-sm text-muted-foreground text-center">No products found.</p>
+                  )}
+                </div>
+              </PopoverContent>
+            </Popover>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <div className="w-full">
