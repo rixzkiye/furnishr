@@ -27,13 +27,35 @@ const ProductFilters = ({
   setSearchTerm,
   searchPreviewResults,
 }: ProductFiltersProps) => {
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const showPreview = isSearchFocused && searchTerm.length > 0;
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const showPreview = searchTerm.length > 0 && isPopoverOpen;
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value.length > 0) {
+      setIsPopoverOpen(true);
+    } else {
+      setIsPopoverOpen(false);
+    }
+  };
+
+  const handleFocus = () => {
+    if (searchTerm.length > 0) {
+      setIsPopoverOpen(true);
+    }
+  };
+
+  const handleBlur = () => {
+    // We delay the popover closing to allow for clicks inside it
+    setTimeout(() => {
+      setIsPopoverOpen(false);
+    }, 150);
+  };
 
   return (
     <div className="bg-card p-4 rounded-lg border shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
         <div className="w-full md:flex-1">
-            <Popover open={showPreview} onOpenChange={(open) => !open && setIsSearchFocused(false)}>
+            <Popover open={showPreview} onOpenChange={setIsPopoverOpen}>
               <PopoverAnchor asChild>
                 <div>
                   <label htmlFor="search-input" className="sr-only">Search</label>
@@ -42,9 +64,9 @@ const ProductFilters = ({
                       type="text"
                       placeholder="Search products..."
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      onFocus={() => setIsSearchFocused(true)}
-                      onBlur={() => setTimeout(() => setIsSearchFocused(false), 150)} // Delay to allow click on popover
+                      onChange={handleSearchChange}
+                      onFocus={handleFocus}
+                      onBlur={handleBlur}
                       className="w-full"
                       autoComplete="off"
                   />
